@@ -1,0 +1,417 @@
+/* Dashboard Container */
+.dashboard {
+  min-height: 100vh;
+  background: #f5f7fa;
+  color: #2c3e50;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+}
+
+/* Header Styles */
+.dashboard-header {
+  background: #ffffff;
+  padding: 1.2rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e8ecf1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.app-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #1a2634;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #f8f9fa;
+  padding: 0.4rem 1.2rem;
+  border-radius: 20px;
+  border: 1px solid #e8ecf1;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #27ae60;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #5a6a7a;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Dashboard Content */
+.dashboard-content {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+/* Dashboard Sections */
+.dashboard-section {
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e8ecf1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.dashboard-section:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Section 1: 3-Zone Status - Full width top */
+.zone-status {
+  grid-column: 1 / -1;
+}
+
+/* Section 2: Physical Condition */
+.physical-condition {
+  grid-column: 1 / 2;
+}
+
+/* Section 3: Electrical Telemetry */
+.electrical-telemetry {
+  grid-column: 2 / 3;
+}
+
+/* Section 4: Events */
+.events {
+  grid-column: 3 / 4;
+}
+
+/* Section 5: Event History - Full width bottom */
+.event-history {
+  grid-column: 1 / -1;
+}
+
+/* Section Header */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #fafbfc;
+  border-bottom: 1px solid #e8ecf1;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a2634;
+  margin: 0;
+}
+
+.section-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.25rem 0.8rem;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #e8ecf1;
+  color: #5a6a7a;
+}
+
+/* Section Content */
+.section-content {
+  padding: 1.2rem 1.5rem;
+}
+
+/* Zone Grid */
+.zone-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.zone-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #dce1e8;
+}
+
+.zone-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.zone-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.2rem 0.8rem;
+  border-radius: 12px;
+}
+
+.status-normal {
+  color: #27ae60;
+  background: #eafaf1;
+}
+
+.status-warning {
+  color: #f39c12;
+  background: #fef9e7;
+}
+
+.status-alert {
+  color: #e74c3c;
+  background: #fdedec;
+}
+
+/* Metric Grid */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.6rem 0.8rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.metric-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: #7f8c8d;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.2rem;
+}
+
+.metric-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Events List */
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.event-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0.8rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.event-time {
+  color: #7f8c8d;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  min-width: 70px;
+}
+
+.event-type {
+  flex: 1;
+  font-weight: 500;
+}
+
+.event-info {
+  color: #3498db;
+}
+
+.event-success {
+  color: #27ae60;
+}
+
+.event-warning {
+  color: #f39c12;
+}
+
+.event-error {
+  color: #e74c3c;
+}
+
+/* History List */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.history-item {
+  display: flex;
+  gap: 1rem;
+  padding: 0.4rem 0.8rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  border-left: 2px solid #dce1e8;
+}
+
+.history-date {
+  color: #7f8c8d;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  min-width: 90px;
+}
+
+.history-event {
+  color: #2c3e50;
+}
+
+/* Placeholder Text */
+.placeholder-text {
+  font-size: 0.8rem;
+  color: #95a5a6;
+  text-align: center;
+  padding-top: 0.5rem;
+  border-top: 1px solid #ecf0f1;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .zone-status {
+    grid-column: 1 / -1;
+  }
+
+  .physical-condition {
+    grid-column: 1 / 2;
+  }
+
+  .electrical-telemetry {
+    grid-column: 2 / 3;
+  }
+
+  .events {
+    grid-column: 1 / 2;
+  }
+
+  .event-history {
+    grid-column: 2 / 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .app-title {
+    font-size: 1.2rem;
+  }
+
+  .dashboard-content {
+    padding: 1rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .zone-status,
+  .physical-condition,
+  .electrical-telemetry,
+  .events,
+  .event-history {
+    grid-column: 1 / -1;
+  }
+
+  .zone-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .section-header {
+    padding: 0.8rem 1rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+
+  .section-content {
+    padding: 1rem;
+  }
+
+  .event-item,
+  .history-item {
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .event-time,
+  .history-date {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.8rem 1rem;
+  }
+
+  .app-title {
+    font-size: 1rem;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .connection-status {
+    padding: 0.3rem 0.8rem;
+  }
+
+  .status-text {
+    font-size: 0.75rem;
+  }
+}
