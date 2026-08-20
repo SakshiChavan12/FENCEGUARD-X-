@@ -2,6 +2,8 @@ import React from 'react';
 import ZoneStatus from './components/ZoneStatus';
 import PhysicalCondition from './components/PhysicalCondition';
 import ElectricalTelemetry from './components/ElectricalTelemetry';
+import Events from './components/Events';
+import EventHistory from './components/EventHistory';
 import './App.css';
 
 function App() {
@@ -33,28 +35,14 @@ function App() {
             <ElectricalTelemetry />
           </div>
           
-          {/* Section 4: Events */}
-          <div className="dashboard-card placeholder-card">
-            <div className="card-header">
-              <h3 className="card-title">Events</h3>
-              <span className="card-badge">Coming Soon</span>
-            </div>
-            <div className="card-body">
-              <p className="card-placeholder">Coming soon...</p>
-            </div>
+          {/* Section 4: Events - Full width */}
+          <div className="grid-full-width">
+            <Events />
           </div>
           
           {/* Section 5: Event History - Full width */}
           <div className="grid-full-width">
-            <div className="dashboard-card placeholder-card">
-              <div className="card-header">
-                <h3 className="card-title">Event History</h3>
-                <span className="card-badge">Coming Soon</span>
-              </div>
-              <div className="card-body">
-                <p className="card-placeholder">Coming soon...</p>
-              </div>
-            </div>
+            <EventHistory />
           </div>
           
         </div>
