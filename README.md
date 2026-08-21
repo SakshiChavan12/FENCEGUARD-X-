@@ -1,28 +1,40 @@
-Security Monitoring Dashboard
+🛡️ Security Monitoring Dashboard
 
-A modern, responsive monitoring dashboard for security and sensor
-systems, built with React + Vite and integrated with a RESTful
-backend.
+A modern, responsive security and sensor monitoring dashboard built
+with React + Vite, integrated with a Node.js / Express REST
+API and MongoDB.
 
-The dashboard is designed for perimeter fence monitoring and provides a
-clear view of zone health, physical sensor conditions, electrical
-telemetry, live events, and historical events.
+The dashboard is designed for perimeter fence monitoring and
+provides a single interface for monitoring zone health, physical sensor
+conditions, electrical telemetry, live events, and historical events.
 
-Features
+✨ Features
 
-3-Zone Status
+🟢 1. 3-Zone Status
 
-Monitor the status of all configured zones
+Monitor the health of all configured fence zones in real time.
 
-Display sensor status: online, offline, warning, or critical
+Zone status: online, offline, warning, critical
 
-Show voltage, current, temperature, and relay state
+Voltage readings
 
-Display sensor count and last update time
+Current readings
 
-Physical Condition
+Temperature readings
 
-Overall sensor health summary
+Relay state
+
+Sensor count
+
+Last update time
+
+Zone-wise sensor grouping
+
+🌡️ 2. Physical Condition
+
+Provides an overall view of sensor and physical system health.
+
+Overall health status
 
 Online / warning / critical / offline distribution
 
@@ -30,41 +42,57 @@ Temperature monitoring
 
 Relay state
 
-Last heartbeat and last update
+Last heartbeat
+
+Last update
 
 Sensor locations grouped by zone
 
-Electrical Telemetry
+⚡ 3. Electrical Telemetry
 
-Latest voltage and current readings
+Displays the latest electrical readings received from sensors.
 
-Voltage and current ranges
+Latest voltage
+
+Latest current
+
+Voltage range
+
+Current range
 
 Active sensor count
 
-Sensors currently reporting data
+Sensors reporting data
 
-Electrical readings grouped by zone
+Zone-wise electrical readings
 
-Events
+Sensor status
 
-Live event feed
+🚨 4. Events
 
-Event type and sensor ID
+Displays the latest events received from the backend.
 
-Voltage, current, and temperature at event time
+Event type
+
+Sensor ID
+
+Voltage at event time
+
+Current at event time
+
+Temperature at event time
 
 ML classification
 
 Anomaly score
 
-Action performed by the system
+System action
 
 Event timestamp
 
-Event History
+📜 5. Event History
 
-Historical event table
+Provides a searchable and filterable historical event view.
 
 Search events
 
@@ -72,35 +100,45 @@ Filter by sensor
 
 Filter by event type
 
-View voltage, current, temperature, anomaly score, ML
-classification, and action
+Event timestamps
+
+Voltage
+
+Current
+
+Temperature
+
+Anomaly score
+
+ML classification
+
+Action
 
 Pagination-ready API integration
 
-Tech Stack
+🧰 Tech Stack
 
-Frontend: React 18 + Vite
+Layer              Technology
 
-Styling: Custom CSS
+Frontend           React 18 + Vite
+Styling            Custom CSS
+HTTP Client        Axios
+State Management   React Hooks
+Backend            Node.js + Express
+Database           MongoDB
+API                REST
+Development        npm + Vite
 
-HTTP Client: Axios
-
-State Management: React Hooks
-
-Backend: Node.js / Express REST API
-
-Database: MongoDB
-
-API: RESTful endpoints
-
-Project Structure
+📁 Project Structure
 
 security-monitoring-dashboard/
+│
 ├── backend/
 │   ├── src/
 │   │   ├── controllers/
 │   │   ├── models/
 │   │   └── routes/
+│   │
 │   └── package.json
 │
 ├── frontend/
@@ -111,20 +149,23 @@ security-monitoring-dashboard/
 │   │   │   ├── ElectricalTelemetry.jsx
 │   │   │   ├── Events.jsx
 │   │   │   └── EventHistory.jsx
+│   │   │
 │   │   ├── services/
 │   │   │   └── api.js
+│   │   │
 │   │   ├── App.jsx
 │   │   └── main.jsx
+│   │
 │   ├── .env
 │   └── package.json
 │
 └── README.md
 
-Quick Start
+🚀 Quick Start
 
-Prerequisites
+✅ Prerequisites
 
-Make sure the following are installed:
+Install the following before starting:
 
 Node.js >= 18
 
@@ -134,17 +175,25 @@ MongoDB local installation or MongoDB Atlas
 
 Git
 
-1. Clone the Repository
+Check your installed versions:
+
+node --version
+npm --version
+git --version
+
+1️⃣ Clone the Repository
 
 git clone https://github.com/yourusername/security-monitoring-dashboard.git
 cd security-monitoring-dashboard
 
-2. Start the Backend
+2️⃣ Start the Backend
+
+Open a terminal:
 
 cd backend
 npm install
 
-Create a .env file:
+Create a backend .env file:
 
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/fenceguard
@@ -154,11 +203,13 @@ Start the backend:
 
 npm run dev
 
-The backend should be available at:
+Backend URL:
 
 http://localhost:5000
 
-3. Start the Frontend
+Keep this terminal running.
+
+3️⃣ Start the Frontend
 
 Open a new terminal:
 
@@ -170,27 +221,29 @@ Create frontend/.env:
 VITE_API_URL=http://localhost:5000
 VITE_USE_MOCK_DATA=false
 
-Start the frontend:
+Start Vite:
 
 npm run dev
 
-Open:
+Open the dashboard:
 
 http://localhost:5173
 
-Backend API
+🔌 Backend API
 
-The frontend is integrated with the following backend endpoints.
+The frontend consumes the following REST endpoints:
 
-Method   Endpoint                     Purpose
+Method   Endpoint                     Description
 
-GET      /api/v1/fence/status       Get all sensor statuses
-GET      /api/v1/fence/status/:id   Get an individual sensor
-GET      /api/v1/events             Get paginated events
-GET      /api/v1/events/search      Search and filter events
-GET      /api/v1/events/:id         Get an individual event
+GET    /api/v1/fence/status       Get all sensor statuses
+GET    /api/v1/fence/status/:id   Get one sensor
+GET    /api/v1/events             Get paginated events
+GET    /api/v1/events/search      Search and filter events
+GET    /api/v1/events/:id         Get one event
 
-Sensor Response
+📡 Sensor Data Model
+
+Example sensor response:
 
 {
   "sensorId": "SENSOR_001",
@@ -203,7 +256,22 @@ Sensor Response
   "lastUpdate": "2026-08-21T09:00:00.000Z"
 }
 
-Event Response
+Sensor Fields
+
+Field                   Example Meaning
+
+sensorId         SENSOR_001 Unique sensor identifier
+location             Zone 1 Sensor zone
+status               online Current sensor status
+voltage               120.5 Voltage in volts
+current                 1.2 Current reading
+temperature            25.4 Temperature in °C
+relayState             true Relay state
+lastUpdate      ISO timestamp Last sensor update
+
+🚨 Event Data Model
+
+Example event:
 
 {
   "sensorId": "SENSOR_001",
@@ -217,108 +285,164 @@ Event Response
   "action": "none"
 }
 
-API Response Wrapper
+Event Fields
 
-The backend may return responses using the following structure:
+Field                Example         Meaning
+
+sensorId           SENSOR_001    Sensor that generated the event
+timestamp          ISO timestamp   Event time
+eventType          normal        Event category
+voltage            120.5         Voltage during event
+current            1.2           Current during event
+temperature        25.4          Temperature during event
+anomalyScore       0.1           ML anomaly score
+mlClassification   normal        ML classification
+action             none          System action
+
+📦 API Response Wrapper
+
+The backend may return data using:
 
 {
   "data": [],
   "message": "Success"
 }
 
-The frontend API service handles this response structure before passing
-data to the dashboard components.
+The frontend API service unwraps the data property before passing the
+result to the React components.
 
-Dashboard Components
+This keeps the UI components focused on displaying the actual sensor and
+event models.
 
-Component                           Displays
+🖥️ Dashboard Components
 
-3-Zone Status                   Zone status, voltage, current,
-temperature, relay state, sensor
+Component                           Purpose
+
+🟢 3-Zone Status                Zone status, voltage, current,
+temperature, relay state and sensor
 count
 
-Physical Condition              Overall health, temperature, relay
-state, heartbeat, status
-distribution
+🌡️ Physical Condition           Overall health, temperature, relay,
+heartbeat and status distribution
 
-Electrical Telemetry            Latest voltage/current, ranges,
-active sensors, per-zone readings
+⚡ Electrical Telemetry         Latest voltage/current, ranges,
+active sensors and zone readings
 
-Events                          Event type, sensor ID, ML
-classification, anomaly score,
-electrical readings, actions
+🚨 Events                       Event type, sensor ID, ML
+classification, anomaly score and
+actions
 
-Data Flow
+🔄 Data Flow
 
-MongoDB
-   │
-   ▼
-Backend REST API
-   │
-   ├── /api/v1/fence/status
-   │
-   └── /api/v1/events
-          │
-          ▼
-      Axios API Service
-          │
-          ▼
-     React Components
-          │
-          ├── 3-Zone Status
-          ├── Physical Condition
-          ├── Electrical Telemetry
-          ├── Events
-          └── Event History
+┌──────────────┐
+│   MongoDB    │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────────────┐
+│ Node.js / Express    │
+│      REST API        │
+└──────────┬───────────┘
+           │
+           ├── GET /api/v1/fence/status
+           │
+           └── GET /api/v1/events
+                    │
+                    ▼
+           ┌─────────────────┐
+           │ Axios API Layer │
+           │    api.js       │
+           └────────┬────────┘
+                    │
+                    ▼
+             ┌─────────────┐
+             │ React App   │
+             └──────┬──────┘
+                    │
+       ┌────────────┼────────────┐
+       ▼            ▼            ▼
+  Zone Status   Physical     Electrical
+                Condition    Telemetry
+       │
+       ├───────────────┐
+       ▼               ▼
+    Events       Event History
 
-Environment Variables
+⚙️ Environment Variables
 
-Frontend
-
-Create frontend/.env:
+Frontend .env
 
 VITE_API_URL=http://localhost:5000
 VITE_USE_MOCK_DATA=false
 
-VITE_USE_MOCK_DATA=false ensures the dashboard uses the backend API
-instead of mock data.
+Important
 
-Backend
+VITE_USE_MOCK_DATA=false
 
-Create backend/.env:
+means the dashboard uses the actual backend API instead of mock
+data.
+
+After changing .env, restart Vite:
+
+npm run dev
+
+Backend .env
 
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/fenceguard
 NODE_ENV=development
 
-Testing the API
+🧪 Test the Backend Before Starting the UI
 
-Before opening the frontend, verify that the backend is responding.
+Testing the API directly is the fastest way to confirm whether the
+backend is working.
 
-Fence Status
+Test Fence Status
 
 curl http://localhost:5000/api/v1/fence/status
 
-Events
+Test Events
 
 curl "http://localhost:5000/api/v1/events?page=1&limit=10"
 
-Individual Sensor
+Test Individual Sensor
 
 curl http://localhost:5000/api/v1/fence/status/SENSOR_001
 
-If these endpoints return data successfully, the frontend can consume
-the backend data.
+Expected Result
 
-Sample Database Data
+You should receive JSON containing sensor or event data.
 
-If sample data is required, use MongoDB:
+For example:
+
+{
+  "data": [
+    {
+      "sensorId": "SENSOR_001",
+      "location": "Zone 1",
+      "status": "online",
+      "voltage": 120.5,
+      "current": 1.2,
+      "temperature": 25.4,
+      "relayState": true
+    }
+  ]
+}
+
+If the API works in curl but the dashboard does not show data, the
+issue is likely in the frontend/API configuration.
+
+🗄️ Sample MongoDB Data
+
+Start MongoDB shell:
 
 mongosh
 
-Then:
+Select the database:
 
 use fenceguard
+
+Insert sample sensors:
 
 db.sensors.insertMany([
   {
@@ -353,7 +477,7 @@ db.sensors.insertMany([
   }
 ])
 
-Sample event:
+Insert a sample event:
 
 db.events.insertOne({
   sensorId: "SENSOR_001",
@@ -368,130 +492,169 @@ db.events.insertOne({
   metadata: {}
 })
 
-Troubleshooting
+Verify the records:
 
-Backend returns 500
+db.sensors.find().pretty()
 
-Check:
+db.events.find().pretty()
 
-Backend server is running on port 5000
+🛠️ Troubleshooting
 
-MongoDB is running
+❌ Backend Returns 500 Internal Server Error
 
-MONGODB_URI is correct
+Check the following:
 
-The requested API endpoint exists
-
-Backend terminal logs for the actual error
+✓ Backend is running
+✓ MongoDB is running
+✓ PORT is correct
+✓ MONGODB_URI is correct
+✓ API route exists
+✓ Database contains the expected collections
+✓ Backend terminal contains no database/route errors
 
 Test directly:
 
 curl http://localhost:5000/api/v1/fence/status
 
-Network Error in Frontend
+Then check the backend terminal for the actual error.
 
-Check frontend/.env:
+❌ Network Error in Frontend
+
+Check:
 
 VITE_API_URL=http://localhost:5000
+
+Then restart:
+
+npm run dev
+
+❌ Mock Data Appears
+
+Check:
+
+VITE_USE_MOCK_DATA=false
 
 Then restart Vite:
 
 npm run dev
 
-Mock Data Appears
+❌ React Error: Objects Are Not Valid as a React Child
 
-Make sure:
-
-VITE_USE_MOCK_DATA=false
-
-Then restart the frontend development server.
-
-React Error: Objects Are Not Valid as a React Child
-
-Do not render an error object directly.
-
-Use:
-
-<p>{error?.message || "Something went wrong"}</p>
-
-instead of:
+Do not render an entire error object:
 
 <p>{error}</p>
 
-Empty Dashboard
+Instead render a readable property:
 
-Verify the backend API first:
+<p>{error?.message || "Something went wrong"}</p>
+
+❌ Empty Dashboard
+
+First test the backend:
 
 curl http://localhost:5000/api/v1/fence/status
+
 curl "http://localhost:5000/api/v1/events?page=1&limit=10"
 
-If the API returns empty data, check MongoDB collections and backend
-logs.
+If the API returns empty data, check MongoDB:
 
-Development Workflow
+mongosh
 
-Recommended startup order:
+use fenceguard
+
+db.sensors.find()
+db.events.find()
+
+If the API returns correct data but the dashboard is empty, check:
+
+1. VITE_API_URL
+2. Browser Network tab
+3. api.js response mapping
+4. Component data mapping
+5. Browser console errors
+
+🔍 Recommended Development Workflow
+
+Follow this order when running the project:
 
 1. Start MongoDB
        ↓
 2. Start Backend
        ↓
-3. Test API with curl
+3. Test REST API
        ↓
 4. Start Frontend
        ↓
 5. Open Dashboard
        ↓
-6. Verify live API data in browser
+6. Open Browser DevTools
+       ↓
+7. Check Network → API responses
+       ↓
+8. Verify dashboard values match backend
 
-Current Scope
+This makes backend/frontend integration issues much easier to identify.
 
-This dashboard intentionally focuses on the following core
-functionality:
+🎯 Current Scope
 
-3-Zone Status
+The dashboard currently focuses only on the five required monitoring
+functions:
 
-Physical Condition
+┌───────────────────────────────┐
+│   Security Monitoring System  │
+├───────────────────────────────┤
+│  1. 3-Zone Status             │
+│  2. Physical Condition        │
+│  3. Electrical Telemetry      │
+│  4. Events                    │
+│  5. Event History             │
+└───────────────────────────────┘
 
-Electrical Telemetry
+The frontend is designed to consume actual backend sensor and event
+data rather than relying on assumed frontend-only fields.
 
-Events
+🚀 Future Improvements
 
-Event History
-
-The UI is designed to consume actual backend sensor and event data
-rather than relying on assumed frontend-only fields.
-
-Future Improvements
-
-Potential future enhancements include:
+Possible future enhancements:
 
 WebSocket-based real-time updates
 
 Advanced analytics and historical charts
 
-User authentication and role-based access
+User authentication
+
+Role-based access control
 
 Configurable sensor thresholds
 
 Event acknowledgement and resolution
 
-Exporting event history
+Event export
 
-Advanced monitoring and notification features
+Notifications and alerts
 
-Contributing
+Advanced monitoring reports
 
-Create a feature branch.
+🤝 Contributing
 
-Make the required changes.
+Contributions are welcome.
 
-Test both backend and frontend.
+Development process
 
-Verify API integration.
+# 1. Create a feature branch
+git checkout -b feature/your-feature
 
-Commit your changes.
+# 2. Make your changes
 
-Push the branch.
+# 3. Test backend and frontend
 
-Open a Pull Request.
+# 4. Check API integration
+
+# 5. Commit
+git add .
+git commit -m "feat: add your feature"
+
+# 6. Push
+git push origin feature/your-feature
+
+Then open a Pull Request.
