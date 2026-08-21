@@ -19,32 +19,30 @@ function App() {
       
       <main className="app-content">
         <div className="dashboard-grid">
-          
-          {/* Section 1: 3-Zone Status - Full width */}
+          {/* Section 1: 3-Zone Status */}
           <div className="grid-full-width">
             <ZoneStatus />
           </div>
           
-          {/* Section 2: Physical Condition - Full width */}
+          {/* Section 2: Physical Condition */}
           <div className="grid-full-width">
             <PhysicalCondition />
           </div>
           
-          {/* Section 3: Electrical Telemetry - Full width */}
+          {/* Section 3: Electrical Telemetry */}
           <div className="grid-full-width">
             <ElectricalTelemetry />
           </div>
           
-          {/* Section 4: Events - Full width */}
+          {/* Section 4: Events */}
           <div className="grid-full-width">
             <Events />
           </div>
           
-          {/* Section 5: Event History - Full width */}
+          {/* Section 5: Event History */}
           <div className="grid-full-width">
             <EventHistory />
           </div>
-          
         </div>
       </main>
     </div>

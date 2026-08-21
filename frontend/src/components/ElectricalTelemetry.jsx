@@ -1,46 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { getFenceStatus } from '../services/api';
+import {
+  getWorstStatus,
+  getLatestValue,
+  formatValue,
+  STATUS_CONFIG,
+} from '../utils/helpers';
 import './ElectricalTelemetry.css';
-
-// Status display configuration
-const STATUS_CONFIG = {
-  online: {
-    label: 'Online',
-    className: 'status-online',
-    color: '#27ae60',
-  },
-  offline: {
-    label: 'Offline',
-    className: 'status-offline',
-    color: '#95a5a6',
-  },
-  warning: {
-    label: 'Warning',
-    className: 'status-warning',
-    color: '#f39c12',
-  },
-  critical: {
-    label: 'Critical',
-    className: 'status-critical',
-    color: '#e74c3c',
-  },
-};
-
-// Format value for display
-const formatValue = (value, unit = '', decimals = 1) => {
-  if (value === null || value === undefined) return 'N/A';
-  if (typeof value === 'number') {
-    return `${value.toFixed(decimals)}${unit}`;
-  }
-  return `${value}${unit}`;
-};
 
 const ElectricalTelemetry = () => {
   const [sensors, setSensors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastFetch, setLastFetch] = useState(null);
-  const [usingMock, setUsingMock] = useState(false);
 
   const fetchElectricalData = async () => {
     setLoading(true);
@@ -51,16 +23,17 @@ const ElectricalTelemetry = () => {
     if (result.success) {
       setSensors(result.data);
       setLastFetch(new Date());
-      setUsingMock(result.isMock || false);
       if (result.error) {
         setError(result.error);
       } else {
         setError(null);
       }
     } else {
-      setError(result.message);
+      const errorMessage = typeof result.message === 'string' 
+        ? result.message 
+        : 'Failed to load electrical data';
+      setError(errorMessage);
       setSensors([]);
-      setUsingMock(false);
     }
     
     setLoading(false);
@@ -68,10 +41,7 @@ const ElectricalTelemetry = () => {
 
   useEffect(() => {
     fetchElectricalData();
-    
-    // Refresh every 30 seconds
     const interval = setInterval(fetchElectricalData, 30000);
-    
     return () => clearInterval(interval);
   }, []);
 
@@ -89,27 +59,8 @@ const ElectricalTelemetry = () => {
   const activeSensors = sensors.filter(s => s.status === 'online').length;
   
   // Get latest values across all sensors
-  const getLatestValue = (field) => {
-    let latest = null;
-    let latestTime = null;
-    
-    sensors.forEach(sensor => {
-      const value = sensor[field];
-      const time = sensor.lastUpdate || sensor.lastHeartbeat;
-      
-      if (value !== undefined && value !== null) {
-        if (!latestTime || (time && new Date(time) > new Date(latestTime))) {
-          latest = value;
-          latestTime = time;
-        }
-      }
-    });
-    
-    return latest;
-  };
-
-  const latestVoltage = getLatestValue('voltage');
-  const latestCurrent = getLatestValue('current');
+  const latestVoltage = getLatestValue(sensors, 'voltage');
+  const latestCurrent = getLatestValue(sensors, 'current');
 
   // Get min/max values
   const getMinMax = (field) => {
@@ -128,7 +79,7 @@ const ElectricalTelemetry = () => {
   const voltageRange = getMinMax('voltage');
   const currentRange = getMinMax('current');
 
-  // Get sensors grouped by location with electrical data
+  // Get sensors grouped by location
   const sensorsByLocation = {};
   sensors.forEach(sensor => {
     const location = sensor.location || 'Unknown';
@@ -138,7 +89,29 @@ const ElectricalTelemetry = () => {
     sensorsByLocation[location].push(sensor);
   });
 
-  // Render loading state
+  // Helper to get latest value for specific sensors
+  const getLatestValueForSensors = (sensors, field) => {
+    if (!sensors || sensors.length === 0) return null;
+    
+    let latest = null;
+    let latestTime = null;
+    
+    sensors.forEach(sensor => {
+      const value = sensor[field];
+      const time = sensor.lastUpdate || sensor.lastHeartbeat;
+      
+      if (value !== undefined && value !== null) {
+        if (!latestTime || (time && new Date(time) > new Date(latestTime))) {
+          latest = value;
+          latestTime = time;
+        }
+      }
+    });
+    
+    return latest;
+  };
+
+  // Loading state
   if (loading && sensors.length === 0) {
     return (
       <div className="electrical-container">
@@ -150,14 +123,16 @@ const ElectricalTelemetry = () => {
     );
   }
 
-  // Render error state
+  // Error state
   if (error && sensors.length === 0) {
+    const errorMessage = typeof error === 'string' ? error : (error?.message || 'Unable to load data');
+    
     return (
       <div className="electrical-container">
         <div className="electrical-error">
           <div className="error-icon">⚠</div>
           <h3>Unable to Load Electrical Data</h3>
-          <p>{error}</p>
+          <p>{errorMessage}</p>
           <button onClick={handleRetry} className="retry-button">
             Retry
           </button>
@@ -166,7 +141,7 @@ const ElectricalTelemetry = () => {
     );
   }
 
-  // Render empty state
+  // Empty state
   if (sensors.length === 0) {
     return (
       <div className="electrical-container">
@@ -208,11 +183,6 @@ const ElectricalTelemetry = () => {
           </span>
         </div>
         <div className="header-right">
-          {usingMock && (
-            <span className="mock-badge" title="Using mock data (no backend)">
-              📊 Mock Data
-            </span>
-          )}
           {lastFetch && (
             <span className="last-fetch">
               Updated: {lastFetch.toLocaleTimeString()}
@@ -248,7 +218,7 @@ const ElectricalTelemetry = () => {
             <div className="summary-label">Active Sensors</div>
             <div className="summary-value">{activeSensors} / {totalSensors}</div>
             <div className="summary-range">
-              {((activeSensors / totalSensors) * 100).toFixed(0)}% online
+              {totalSensors > 0 ? ((activeSensors / totalSensors) * 100).toFixed(0) : 0}% online
             </div>
           </div>
 
@@ -256,12 +226,12 @@ const ElectricalTelemetry = () => {
             <div className="summary-label">Sensors with Data</div>
             <div className="summary-value">{sensorsWithData.length}</div>
             <div className="summary-range">
-              {((sensorsWithData.length / totalSensors) * 100).toFixed(0)}% reporting
+              {totalSensors > 0 ? ((sensorsWithData.length / totalSensors) * 100).toFixed(0) : 0}% reporting
             </div>
           </div>
         </div>
 
-        {/* Sensors by Location */}
+        {/* Electrical Readings by Location */}
         <div className="locations-electrical">
           <div className="locations-header">
             <span className="locations-icon">📍</span>
@@ -311,54 +281,6 @@ const ElectricalTelemetry = () => {
       </div>
     </div>
   );
-};
-
-// Helper function to get latest value for a specific set of sensors
-const getLatestValueForSensors = (sensors, field) => {
-  if (!sensors || sensors.length === 0) return null;
-  
-  let latest = null;
-  let latestTime = null;
-  
-  sensors.forEach(sensor => {
-    const value = sensor[field];
-    const time = sensor.lastUpdate || sensor.lastHeartbeat;
-    
-    if (value !== undefined && value !== null) {
-      if (!latestTime || (time && new Date(time) > new Date(latestTime))) {
-        latest = value;
-        latestTime = time;
-      }
-    }
-  });
-  
-  return latest;
-};
-
-// Helper function to get worst status
-const getWorstStatus = (sensors) => {
-  if (!sensors || sensors.length === 0) return null;
-  
-  const STATUS_PRIORITY = {
-    critical: 4,
-    warning: 3,
-    offline: 2,
-    online: 1,
-  };
-  
-  let worstStatus = null;
-  let worstPriority = 0;
-  
-  sensors.forEach(sensor => {
-    const status = sensor.status || 'offline';
-    const priority = STATUS_PRIORITY[status] || 0;
-    if (priority > worstPriority) {
-      worstPriority = priority;
-      worstStatus = status;
-    }
-  });
-  
-  return worstStatus;
 };
 
 export default ElectricalTelemetry;

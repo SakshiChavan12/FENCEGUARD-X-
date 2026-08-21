@@ -1,9 +1,8 @@
 import axios from 'axios';
 
-// API base URL from environment variables
+// API base URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-// Create axios instance with default configuration
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
@@ -12,20 +11,18 @@ const api = axios.create({
   },
 });
 
-// Response interceptor to handle common errors
+// Response interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Network errors
     if (!error.response) {
       return Promise.reject({
-        message: 'Network error. Please check your connection.',
+        message: 'Backend server is not running. Please start the backend server.',
         status: null,
         originalError: error,
       });
     }
 
-    // HTTP error responses
     const { status, data } = error.response;
     let errorMessage = 'An unexpected error occurred.';
 
@@ -53,25 +50,20 @@ api.interceptors.response.use(
 );
 
 // ============================================
-// FENCE STATUS API ENDPOINTS
+// FENCE STATUS API
 // ============================================
 
-/**
- * GET /api/v1/fence/status
- * Get all fence/sensor statuses
- */
 export const getFenceStatus = async () => {
   try {
-    // ✅ CORRECT: /api/v1/fence/status
     const response = await api.get('/api/v1/fence/status');
     
-    // Unwrap the response: { data: [...], message: "..." }
     if (response.data && response.data.data) {
       return {
         success: true,
         data: response.data.data,
         message: response.data.message || 'Success',
         raw: response.data,
+        isMock: false,
       };
     }
     
@@ -80,6 +72,7 @@ export const getFenceStatus = async () => {
       data: response.data,
       message: 'Success',
       raw: response.data,
+      isMock: false,
     };
   } catch (error) {
     console.error('Error fetching fence status:', error);
@@ -93,13 +86,8 @@ export const getFenceStatus = async () => {
   }
 };
 
-/**
- * GET /api/v1/fence/status/:id
- * Get individual sensor status by ID
- */
 export const getSensorStatus = async (sensorId) => {
   try {
-    // ✅ CORRECT: /api/v1/fence/status/:id
     const response = await api.get(`/api/v1/fence/status/${sensorId}`);
     
     if (response.data && response.data.data) {
@@ -130,13 +118,9 @@ export const getSensorStatus = async (sensorId) => {
 };
 
 // ============================================
-// EVENTS API ENDPOINTS
+// EVENTS API
 // ============================================
 
-/**
- * GET /api/v1/events
- * Get events with pagination and filtering
- */
 export const getEvents = async (params = {}) => {
   try {
     const {
@@ -148,7 +132,6 @@ export const getEvents = async (params = {}) => {
       endDate,
     } = params;
 
-    // Build query parameters
     const queryParams = new URLSearchParams();
     queryParams.append('page', page);
     queryParams.append('limit', limit);
@@ -158,20 +141,18 @@ export const getEvents = async (params = {}) => {
     if (startDate) queryParams.append('startDate', startDate);
     if (endDate) queryParams.append('endDate', endDate);
 
-    // ✅ CORRECT: /api/v1/events
     const url = `/api/v1/events?${queryParams.toString()}`;
     const response = await api.get(url);
     
-    // Handle paginated response
     if (response.data && response.data.data) {
       const result = {
         success: true,
         data: response.data.data,
         message: response.data.message || 'Success',
         raw: response.data,
+        isMock: false,
       };
 
-      // Preserve pagination information if available
       if (response.data.pagination) {
         result.pagination = response.data.pagination;
       }
@@ -193,6 +174,7 @@ export const getEvents = async (params = {}) => {
       data: response.data,
       message: 'Success',
       raw: response.data,
+      isMock: false,
     };
   } catch (error) {
     console.error('Error fetching events:', error);
@@ -207,10 +189,6 @@ export const getEvents = async (params = {}) => {
   }
 };
 
-/**
- * GET /api/v1/events/search
- * Search events with advanced filtering
- */
 export const searchEvents = async (params = {}) => {
   try {
     const {
@@ -225,7 +203,6 @@ export const searchEvents = async (params = {}) => {
       maxAnomalyScore,
     } = params;
 
-    // Build query parameters
     const queryParams = new URLSearchParams();
     if (query) queryParams.append('q', query);
     queryParams.append('page', page);
@@ -238,17 +215,16 @@ export const searchEvents = async (params = {}) => {
     if (minAnomalyScore) queryParams.append('minAnomalyScore', minAnomalyScore);
     if (maxAnomalyScore) queryParams.append('maxAnomalyScore', maxAnomalyScore);
 
-    // ✅ CORRECT: /api/v1/events/search
     const url = `/api/v1/events/search?${queryParams.toString()}`;
     const response = await api.get(url);
     
-    // Handle paginated response
     if (response.data && response.data.data) {
       const result = {
         success: true,
         data: response.data.data,
         message: response.data.message || 'Success',
         raw: response.data,
+        isMock: false,
       };
 
       if (response.data.pagination) {
@@ -272,6 +248,7 @@ export const searchEvents = async (params = {}) => {
       data: response.data,
       message: 'Success',
       raw: response.data,
+      isMock: false,
     };
   } catch (error) {
     console.error('Error searching events:', error);
@@ -286,13 +263,8 @@ export const searchEvents = async (params = {}) => {
   }
 };
 
-/**
- * GET /api/v1/events/:id
- * Get individual event by ID
- */
 export const getEvent = async (eventId) => {
   try {
-    // ✅ CORRECT: /api/v1/events/:id
     const response = await api.get(`/api/v1/events/${eventId}`);
     
     if (response.data && response.data.data) {
@@ -326,7 +298,6 @@ export const getEvent = async (eventId) => {
 // HELPER FUNCTIONS
 // ============================================
 
-// Format sensor status for display
 export const formatSensorStatus = (status) => {
   const statusMap = {
     online: { label: 'Online', className: 'status-online', icon: '✓' },
@@ -337,7 +308,6 @@ export const formatSensorStatus = (status) => {
   return statusMap[status] || { label: status || 'Unknown', className: 'status-unknown', icon: '?' };
 };
 
-// Format event type for display
 export const formatEventType = (eventType) => {
   const typeMap = {
     normal: { label: 'Normal', className: 'event-normal' },
@@ -349,7 +319,6 @@ export const formatEventType = (eventType) => {
   return typeMap[eventType] || { label: eventType || 'Unknown', className: 'event-unknown' };
 };
 
-// Format ML classification for display
 export const formatMLClassification = (classification) => {
   const classMap = {
     normal: { label: 'Normal', className: 'ml-normal' },
