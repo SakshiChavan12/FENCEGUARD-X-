@@ -30,6 +30,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .section-title {
@@ -51,6 +52,15 @@
 }
 
 .event-count {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  background: #f8f9fa;
+  padding: 0.2rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid #e8ecf1;
+}
+
+.total-count {
   font-size: 0.8rem;
   color: #7f8c8d;
   background: #f8f9fa;
@@ -207,7 +217,7 @@
 .event-history-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .event-history-table thead {
@@ -216,18 +226,18 @@
 }
 
 .event-history-table th {
-  padding: 0.8rem 1rem;
+  padding: 0.8rem 0.8rem;
   text-align: left;
   font-weight: 600;
   color: #5a6a7a;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
 }
 
 .event-history-table td {
-  padding: 0.7rem 1rem;
+  padding: 0.6rem 0.8rem;
   border-bottom: 1px solid #f0f2f5;
   vertical-align: middle;
 }
@@ -246,27 +256,31 @@
 
 /* Column widths */
 .col-timestamp {
-  min-width: 160px;
-}
-
-.col-zone {
-  min-width: 100px;
-}
-
-.col-type {
-  min-width: 130px;
-}
-
-.col-severity {
-  min-width: 100px;
-}
-
-.col-status {
-  min-width: 90px;
-}
-
-.col-message {
   min-width: 150px;
+}
+.col-sensor {
+  min-width: 100px;
+}
+.col-type {
+  min-width: 110px;
+}
+.col-voltage {
+  min-width: 80px;
+}
+.col-current {
+  min-width: 80px;
+}
+.col-temperature {
+  min-width: 80px;
+}
+.col-score {
+  min-width: 100px;
+}
+.col-ml {
+  min-width: 100px;
+}
+.col-action {
+  min-width: 80px;
 }
 
 /* Table cell styles */
@@ -276,72 +290,141 @@
   color: #5a6a7a;
 }
 
-.zone-value {
+.sensor-value {
   font-weight: 500;
   color: #2c3e50;
+  font-size: 0.85rem;
 }
 
+/* Event Type Badges */
 .event-type-badge {
   display: inline-block;
   padding: 0.2rem 0.6rem;
   border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 500;
-  background: #ecf0f1;
-  color: #2c3e50;
 }
 
-.severity-badge {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.severity-normal {
-  background: #eafaf1;
-  color: #27ae60;
-}
-
-.severity-warning {
-  background: #fef9e7;
-  color: #f39c12;
-}
-
-.severity-critical {
-  background: #fdedec;
-  color: #e74c3c;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.status-active {
+.event-type-badge.event-normal {
   background: #ebf5fb;
   color: #3498db;
 }
 
-.status-resolved {
+.event-type-badge.event-alert {
+  background: #fef9e7;
+  color: #f39c12;
+}
+
+.event-type-badge.event-critical {
+  background: #fdedec;
+  color: #e74c3c;
+}
+
+.event-type-badge.event-heartbeat {
   background: #eafaf1;
   color: #27ae60;
 }
 
-.status-unknown {
+.event-type-badge.event-relay {
+  background: #f4ecf7;
+  color: #8e44ad;
+}
+
+/* Value Colors */
+.voltage-value {
+  color: #2c3e50;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+}
+
+.current-value {
+  color: #2980b9;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+}
+
+.temperature-value {
+  color: #e67e22;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+}
+
+.score-value {
+  color: #8e44ad;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.action-value {
+  color: #16a085;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+}
+
+/* ML Badges */
+.ml-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.ml-badge.ml-normal {
+  background: #eafaf1;
+  color: #27ae60;
+}
+
+.ml-badge.ml-anomaly {
+  background: #fef9e7;
+  color: #f39c12;
+}
+
+.ml-badge.ml-critical {
+  background: #fdedec;
+  color: #e74c3c;
+}
+
+.ml-badge.ml-unknown {
   background: #ecf0f1;
   color: #95a5a6;
 }
 
-.message-value {
-  color: #2c3e50;
+/* Pagination */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  border-top: 1px solid #f0f2f5;
+}
+
+.pagination-button {
+  padding: 0.3rem 1rem;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.2s ease;
+  font-weight: 500;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.pagination-button:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pagination-info {
   font-size: 0.85rem;
+  color: #7f8c8d;
 }
 
 /* Footer */
@@ -370,40 +453,6 @@
 
 .refresh-button:active {
   transform: scale(0.98);
-}
-
-/* Empty State */
-.event-history-empty {
-  text-align: center;
-  padding: 2rem 1rem;
-  color: #7f8c8d;
-}
-
-.empty-icon {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.event-history-empty p {
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
-}
-
-.clear-filters-button {
-  padding: 0.4rem 1.2rem;
-  background: #e8ecf1;
-  color: #5a6a7a;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-right: 0.5rem;
-}
-
-.clear-filters-button:hover {
-  background: #dce1e8;
-  color: #2c3e50;
 }
 
 /* Loading State */
@@ -445,7 +494,24 @@
 
 .event-history-error p {
   color: #e74c3c;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+/* Empty State */
+.event-history-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #7f8c8d;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.event-history-empty p {
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
 }
 
 .retry-button {
@@ -463,18 +529,32 @@
   background: #c0392b;
 }
 
+.clear-filters-button {
+  padding: 0.4rem 1.2rem;
+  background: #e8ecf1;
+  color: #5a6a7a;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 0.5rem;
+}
+
+.clear-filters-button:hover {
+  background: #dce1e8;
+  color: #2c3e50;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
-  .event-history-container {
-    padding: 1.2rem;
-  }
-
-  .col-timestamp {
-    min-width: 140px;
-  }
-
-  .col-message {
-    min-width: 120px;
+  .col-voltage,
+  .col-current,
+  .col-temperature,
+  .col-score,
+  .col-ml,
+  .col-action {
+    min-width: 70px;
   }
 }
 
@@ -521,32 +601,35 @@
   }
 
   .event-history-table {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
   .event-history-table th,
   .event-history-table td {
-    padding: 0.5rem 0.6rem;
+    padding: 0.4rem 0.5rem;
   }
 
   .col-timestamp {
     min-width: 120px;
   }
-
-  .col-type {
-    min-width: 100px;
+  .col-sensor {
+    min-width: 80px;
   }
-
-  .col-message {
-    min-width: 100px;
+  .col-type {
+    min-width: 80px;
   }
 
   .timestamp-value {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
-  .message-value {
-    font-size: 0.8rem;
+  .pagination-controls {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .pagination-info {
+    font-size: 0.75rem;
   }
 }
 
@@ -564,7 +647,8 @@
     font-size: 1rem;
   }
 
-  .event-count {
+  .event-count,
+  .total-count {
     font-size: 0.7rem;
   }
 
@@ -578,55 +662,48 @@
   }
 
   .event-history-table {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
   .event-history-table th,
   .event-history-table td {
-    padding: 0.4rem 0.5rem;
+    padding: 0.3rem 0.4rem;
   }
 
   .col-timestamp {
-    min-width: 100px;
+    min-width: 90px;
   }
-
-  .col-zone {
-    min-width: 70px;
+  .col-sensor {
+    min-width: 60px;
   }
-
   .col-type {
-    min-width: 80px;
-  }
-
-  .col-severity {
     min-width: 70px;
   }
-
-  .col-status {
-    min-width: 70px;
-  }
-
-  .col-message {
-    min-width: 80px;
-  }
-
-  .timestamp-value {
-    font-size: 0.7rem;
+  .col-voltage,
+  .col-current,
+  .col-temperature,
+  .col-score,
+  .col-ml,
+  .col-action {
+    min-width: 50px;
   }
 
   .event-type-badge,
-  .severity-badge,
-  .status-badge {
+  .ml-badge {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.3rem;
+  }
+
+  .timestamp-value {
     font-size: 0.65rem;
-    padding: 0.15rem 0.4rem;
   }
 
-  .message-value {
-    font-size: 0.75rem;
-  }
-
-  .clear-filters {
-    width: 100%;
-    text-align: center;
+  .sensor-value,
+  .voltage-value,
+  .current-value,
+  .temperature-value,
+  .score-value,
+  .action-value {
+    font-size: 0.7rem;
   }
 }
