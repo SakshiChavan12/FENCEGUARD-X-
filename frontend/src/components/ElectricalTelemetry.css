@@ -23,12 +23,14 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .section-title {
@@ -47,6 +49,16 @@
   letter-spacing: 0.5px;
   background: #27ae60;
   color: white;
+}
+
+.sensor-count,
+.active-count {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  background: #f8f9fa;
+  padding: 0.2rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid #e8ecf1;
 }
 
 .mock-badge {
@@ -77,102 +89,149 @@
   gap: 1.2rem;
 }
 
-/* Electrical Groups */
-.electrical-group {
+/* Summary Grid */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.summary-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #f0f2f5;
+  text-align: center;
+}
+
+.summary-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.3rem;
+}
+
+.summary-value {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2c3e50;
+  font-family: 'Courier New', monospace;
+}
+
+.summary-range {
+  font-size: 0.75rem;
+  color: #95a5a6;
+  margin-top: 0.2rem;
+}
+
+/* Locations Electrical */
+.locations-electrical {
   background: #f8f9fa;
   border-radius: 8px;
   padding: 1rem;
 }
 
-.group-header {
+.locations-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.8rem;
 }
 
-.group-icon {
-  font-size: 1.1rem;
+.locations-icon {
+  font-size: 1rem;
 }
 
-.group-title {
-  font-size: 0.9rem;
+.locations-title {
+  font-size: 0.85rem;
   font-weight: 600;
   color: #2c3e50;
-  margin: 0;
 }
 
-/* Electrical Grid */
 .electrical-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 0.8rem;
 }
 
-.electrical-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0.6rem;
+.electrical-card {
   background: #ffffff;
-  border-radius: 6px;
-  border: 1px solid #e8ecf1;
+  border-radius: 8px;
+  padding: 0.8rem;
+  border: 1px solid #f0f2f5;
   transition: all 0.2s ease;
 }
 
-.electrical-item:hover {
-  border-color: #3498db;
-  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
+.electrical-card:hover {
+  border-color: #dce1e8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.electrical-label {
-  font-size: 0.7rem;
+.electrical-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.location-name {
   font-weight: 600;
-  color: #7f8c8d;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.2rem;
-}
-
-.electrical-value {
-  font-size: 1.2rem;
-  font-weight: 600;
-  font-family: 'Courier New', monospace;
-}
-
-/* Value Colors */
-.voltage-value {
   color: #2c3e50;
+  font-size: 0.9rem;
 }
 
-.bus-value {
-  color: #2980b9;
+.location-status {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.1rem 0.5rem;
+  border-radius: 10px;
 }
 
-.current-value {
+.location-status.status-online {
+  background: #eafaf1;
   color: #27ae60;
 }
 
-.power-value {
-  color: #e67e22;
+.location-status.status-warning {
+  background: #fef9e7;
+  color: #f39c12;
 }
 
-/* Timestamp */
-.electrical-timestamp {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid #f0f2f5;
-  font-size: 0.8rem;
+.location-status.status-critical {
+  background: #fdedec;
+  color: #e74c3c;
+}
+
+.location-status.status-offline {
+  background: #ecf0f1;
   color: #7f8c8d;
 }
 
-.timestamp-label {
-  font-weight: 500;
+.electrical-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.3rem;
 }
 
-.timestamp-value {
+.electrical-reading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.reading-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: #95a5a6;
+  letter-spacing: 0.3px;
+}
+
+.reading-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2c3e50;
   font-family: 'Courier New', monospace;
 }
 
@@ -185,42 +244,42 @@
   border-top: 1px solid #f0f2f5;
 }
 
-.refresh-button-small {
-  padding: 0.3rem 1rem;
+.refresh-button {
+  padding: 0.4rem 1.2rem;
   background: #3498db;
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
-.refresh-button-small:hover {
+.refresh-button:hover {
   background: #2980b9;
 }
 
-.refresh-button-small:active {
+.refresh-button:active {
   transform: scale(0.98);
 }
 
 /* Loading State */
 .electrical-loading {
   text-align: center;
-  padding: 1.5rem;
+  padding: 2rem 1rem;
   color: #7f8c8d;
 }
 
-.loading-spinner-small {
+.loading-spinner {
   display: inline-block;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   border: 3px solid #ecf0f1;
   border-top: 3px solid #3498db;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 @keyframes spin {
@@ -231,56 +290,65 @@
 /* Error State */
 .electrical-error {
   text-align: center;
-  padding: 1.5rem;
+  padding: 2rem 1rem;
   background: #fdedec;
   border-radius: 8px;
   border: 1px solid #f5c6cb;
 }
 
 .error-icon {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   margin-bottom: 0.5rem;
 }
 
-.electrical-error p {
+.electrical-error h3 {
   color: #e74c3c;
-  margin-bottom: 0.8rem;
-  font-size: 0.9rem;
+  margin: 0.5rem 0;
 }
 
-.retry-button-small {
-  padding: 0.3rem 1.2rem;
-  background: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.retry-button-small:hover {
-  background: #c0392b;
+.electrical-error p {
+  color: #5a6a7a;
+  margin-bottom: 1rem;
 }
 
 /* Empty State */
 .electrical-empty {
   text-align: center;
-  padding: 1.5rem;
+  padding: 2rem 1rem;
   color: #7f8c8d;
 }
 
 .empty-icon {
-  font-size: 2rem;
+  font-size: 3rem;
   margin-bottom: 0.5rem;
 }
 
 .electrical-empty p {
-  margin-bottom: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.retry-button {
+  padding: 0.5rem 1.5rem;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
   font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.retry-button:hover {
+  background: #2980b9;
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .electrical-container {
     padding: 1rem;
@@ -292,7 +360,6 @@
   }
 
   .header-right {
-    flex-wrap: wrap;
     width: 100%;
   }
 
@@ -300,41 +367,38 @@
     margin-left: 0;
   }
 
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+
+  .summary-value {
+    font-size: 1.4rem;
+  }
+
   .electrical-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.6rem;
-  }
-
-  .electrical-item {
-    padding: 0.5rem;
-  }
-
-  .electrical-value {
-    font-size: 1rem;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
 @media (max-width: 480px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
   .electrical-grid {
     grid-template-columns: 1fr;
-    gap: 0.5rem;
   }
 
-  .electrical-item {
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 0.5rem 0.8rem;
+  .section-title {
+    font-size: 1rem;
   }
 
-  .electrical-label {
-    margin-bottom: 0;
+  .electrical-card-body {
+    grid-template-columns: 1fr 1fr 1fr;
   }
 
-  .electrical-value {
-    font-size: 0.95rem;
-  }
-
-  .group-title {
-    font-size: 0.8rem;
+  .summary-value {
+    font-size: 1.2rem;
   }
 }

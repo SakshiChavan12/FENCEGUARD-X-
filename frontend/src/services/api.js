@@ -1,353 +1,362 @@
 import axios from 'axios';
 
-// API base URL - adjust if backend runs on different port
+// API base URL from environment variables
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+// Create axios instance with default configuration
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Mock data generator for development
-const generateMockZoneData = () => {
-  const statuses = ['NORMAL', 'NORMAL', 'WARNING', 'CRITICAL', 'OFFLINE'];
-  const zoneNames = ['Zone 1', 'Zone 2', 'Zone 3'];
-  
-  return zoneNames.map((name, index) => {
-    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-    
-    return {
-      _id: `zone_${index + 1}`,
-      zoneName: name,
-      status: randomStatus,
-      voltage: Math.round((95 + Math.random() * 30) * 10) / 10,
-      updatedAt: new Date(Date.now() - Math.random() * 600000).toISOString(),
-    };
-  });
-};
+// Response interceptor to handle common errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Network errors
+    if (!error.response) {
+      return Promise.reject({
+        message: 'Network error. Please check your connection.',
+        status: null,
+        originalError: error,
+      });
+    }
 
-// Mock telemetry data generator
-const generateMockTelemetryData = () => {
-  return {
-    _id: 'telemetry_mock_1',
-    ax: Math.round((Math.random() * 2 - 1) * 100) / 100,
-    ay: Math.round((Math.random() * 2 - 1) * 100) / 100,
-    az: Math.round((Math.random() * 2 - 1) * 100) / 100,
-    gx: Math.round((Math.random() * 10 - 5) * 100) / 100,
-    gy: Math.round((Math.random() * 10 - 5) * 100) / 100,
-    gz: Math.round((Math.random() * 10 - 5) * 100) / 100,
-    timestamp: new Date().toISOString(),
-  };
-};
+    // HTTP error responses
+    const { status, data } = error.response;
+    let errorMessage = 'An unexpected error occurred.';
 
-// Mock electrical telemetry data generator
-const generateMockElectricalData = () => {
-  return {
-    _id: 'electrical_mock_1',
-    zone1_v: Math.round((110 + Math.random() * 20) * 10) / 10,
-    zone2_v: Math.round((110 + Math.random() * 20) * 10) / 10,
-    zone3_v: Math.round((110 + Math.random() * 20) * 10) / 10,
-    bus_voltage_v: Math.round((24 + Math.random() * 4) * 10) / 10,
-    current_ma: Math.round((800 + Math.random() * 400) * 10) / 10,
-    power_mw: Math.round((18000 + Math.random() * 12000) * 10) / 10,
-    timestamp: new Date().toISOString(),
-  };
-};
+    switch (status) {
+      case 400:
+        errorMessage = data?.message || 'Bad request. Please check your input.';
+        break;
+      case 404:
+        errorMessage = data?.message || 'Resource not found.';
+        break;
+      case 500:
+        errorMessage = data?.message || 'Server error. Please try again later.';
+        break;
+      default:
+        errorMessage = data?.message || `Error ${status}: ${error.message}`;
+    }
 
-// Mock events data generator
-const generateMockEvents = () => {
-  const eventTypes = ['NORMAL', 'ELECTRICAL_FAULT', 'PHYSICAL_TAMPER', 'BREACH'];
-  const zones = ['Zone 1', 'Zone 2', 'Zone 3'];
-  const severities = ['NORMAL', 'WARNING', 'CRITICAL'];
-  const messages = [
-    'System operating normally',
-    'Voltage spike detected',
-    'Physical access attempt detected',
-    'Unauthorized access detected',
-    'Power fluctuation detected',
-    'Sensor calibration completed',
-    'Network connectivity restored',
-    'Temperature anomaly detected'
-  ];
-
-  const events = [];
-  const numEvents = 5 + Math.floor(Math.random() * 3);
-  
-  for (let i = 0; i < numEvents; i++) {
-    const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
-    const severity = severities[Math.floor(Math.random() * severities.length)];
-    
-    events.push({
-      _id: `event_${i + 1}`,
-      eventType: eventType,
-      zone: zones[Math.floor(Math.random() * zones.length)],
-      severity: severity,
-      message: messages[Math.floor(Math.random() * messages.length)],
-      resolved: Math.random() > 0.7,
-      timestamp: new Date(Date.now() - Math.random() * 3600000).toISOString(),
+    return Promise.reject({
+      message: errorMessage,
+      status: status,
+      originalError: error,
+      data: data,
     });
   }
-  
-  // Sort by timestamp descending (newest first)
-  return events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-};
+);
 
-// Check if we should use mock data
-const useMockData = import.meta.env.VITE_USE_MOCK_DATA === 'true' || !import.meta.env.VITE_API_URL;
+// ============================================
+// FENCE STATUS API ENDPOINTS
+// ============================================
 
-// Zone Status API
-export const mapZoneStatusResponse = (data) => {
-  const zones = Array.isArray(data) ? data : (data?.data || data?.zones || []);
-  
-  return zones.map((item) => ({
-    id: item._id || item.id || `zone-${Math.random()}`,
-    name: item.zoneName || item.name || item.zone || 'Unknown Zone',
-    status: item.status || 'OFFLINE',
-    voltage: item.voltage !== undefined && item.voltage !== null ? item.voltage : null,
-    lastUpdated: item.updatedAt || item.lastUpdated || item.timestamp || null,
-  }));
-};
-
-export const getZoneStatus = async () => {
-  if (useMockData) {
-    console.log('Using mock data for zone status (no backend available)');
-    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 500));
-    
-    const mockData = generateMockZoneData();
-    return {
-      success: true,
-      data: mapZoneStatusResponse(mockData),
-      raw: mockData,
-      isMock: true,
-    };
-  }
-
+/**
+ * GET /api/v1/fence/status
+ * Get all fence/sensor statuses
+ */
+export const getFenceStatus = async () => {
   try {
-    const response = await api.get('/api/status');
-    const data = response.data;
-    const zonesData = data.data || data;
+    // ✅ CORRECT: /api/v1/fence/status
+    const response = await api.get('/api/v1/fence/status');
     
-    return {
-      success: true,
-      data: mapZoneStatusResponse(zonesData),
-      raw: data,
-      isMock: false,
-    };
-  } catch (error) {
-    console.error('Error fetching zone status:', error);
-    
-    if (error.code === 'ERR_NETWORK' || error.response?.status === 404) {
-      console.warn('Backend unavailable, falling back to mock data');
-      const mockData = generateMockZoneData();
+    // Unwrap the response: { data: [...], message: "..." }
+    if (response.data && response.data.data) {
       return {
         success: true,
-        data: mapZoneStatusResponse(mockData),
-        raw: mockData,
-        isMock: true,
-        error: 'Using mock data (backend unavailable)',
+        data: response.data.data,
+        message: response.data.message || 'Success',
+        raw: response.data,
       };
     }
     
     return {
-      success: false,
-      error: error.response?.data?.message || error.message || 'Failed to fetch zone status',
-      status: error.response?.status,
-    };
-  }
-};
-
-// Physical Condition (Telemetry) API
-export const mapTelemetryResponse = (data) => {
-  const telemetry = data?.data || data || {};
-  
-  return {
-    ax: telemetry.ax !== undefined && telemetry.ax !== null ? Number(telemetry.ax) : null,
-    ay: telemetry.ay !== undefined && telemetry.ay !== null ? Number(telemetry.ay) : null,
-    az: telemetry.az !== undefined && telemetry.az !== null ? Number(telemetry.az) : null,
-    gx: telemetry.gx !== undefined && telemetry.gx !== null ? Number(telemetry.gx) : null,
-    gy: telemetry.gy !== undefined && telemetry.gy !== null ? Number(telemetry.gy) : null,
-    gz: telemetry.gz !== undefined && telemetry.gz !== null ? Number(telemetry.gz) : null,
-    timestamp: telemetry.timestamp || telemetry.updatedAt || telemetry.createdAt || null,
-    status: telemetry.physicalStatus || telemetry.status || null,
-  };
-};
-
-export const getPhysicalCondition = async () => {
-  if (useMockData) {
-    console.log('Using mock data for physical condition (no backend available)');
-    await new Promise(resolve => setTimeout(resolve, 400 + Math.random() * 400));
-    
-    const mockData = generateMockTelemetryData();
-    return {
       success: true,
-      data: mapTelemetryResponse(mockData),
-      raw: mockData,
-      isMock: true,
-    };
-  }
-
-  try {
-    const response = await api.get('/api/telemetry/latest');
-    const data = response.data;
-    
-    return {
-      success: true,
-      data: mapTelemetryResponse(data),
-      raw: data,
-      isMock: false,
+      data: response.data,
+      message: 'Success',
+      raw: response.data,
     };
   } catch (error) {
-    console.error('Error fetching physical condition:', error);
+    console.error('Error fetching fence status:', error);
+    return {
+      success: false,
+      data: [],
+      message: error.message || 'Failed to fetch sensor status',
+      status: error.status,
+      error: error,
+    };
+  }
+};
+
+/**
+ * GET /api/v1/fence/status/:id
+ * Get individual sensor status by ID
+ */
+export const getSensorStatus = async (sensorId) => {
+  try {
+    // ✅ CORRECT: /api/v1/fence/status/:id
+    const response = await api.get(`/api/v1/fence/status/${sensorId}`);
     
-    if (error.code === 'ERR_NETWORK' || error.response?.status === 404) {
-      console.warn('Backend unavailable, falling back to mock data');
-      const mockData = generateMockTelemetryData();
+    if (response.data && response.data.data) {
       return {
         success: true,
-        data: mapTelemetryResponse(mockData),
-        raw: mockData,
-        isMock: true,
-        error: 'Using mock data (backend unavailable)',
+        data: response.data.data,
+        message: response.data.message || 'Success',
+        raw: response.data,
       };
     }
     
     return {
-      success: false,
-      error: error.response?.data?.message || error.message || 'Failed to fetch physical condition data',
-      status: error.response?.status,
-    };
-  }
-};
-
-// Electrical Telemetry API
-export const mapElectricalResponse = (data) => {
-  const telemetry = data?.data || data || {};
-  
-  return {
-    zone1_v: telemetry.zone1_v !== undefined && telemetry.zone1_v !== null ? Number(telemetry.zone1_v) : null,
-    zone2_v: telemetry.zone2_v !== undefined && telemetry.zone2_v !== null ? Number(telemetry.zone2_v) : null,
-    zone3_v: telemetry.zone3_v !== undefined && telemetry.zone3_v !== null ? Number(telemetry.zone3_v) : null,
-    bus_voltage_v: telemetry.bus_voltage_v !== undefined && telemetry.bus_voltage_v !== null ? Number(telemetry.bus_voltage_v) : null,
-    current_ma: telemetry.current_ma !== undefined && telemetry.current_ma !== null ? Number(telemetry.current_ma) : null,
-    power_mw: telemetry.power_mw !== undefined && telemetry.power_mw !== null ? Number(telemetry.power_mw) : null,
-    timestamp: telemetry.timestamp || telemetry.updatedAt || telemetry.createdAt || null,
-  };
-};
-
-export const getElectricalTelemetry = async () => {
-  if (useMockData) {
-    console.log('Using mock data for electrical telemetry (no backend available)');
-    await new Promise(resolve => setTimeout(resolve, 400 + Math.random() * 400));
-    
-    const mockData = generateMockElectricalData();
-    return {
       success: true,
-      data: mapElectricalResponse(mockData),
-      raw: mockData,
-      isMock: true,
-    };
-  }
-
-  try {
-    const response = await api.get('/api/telemetry/latest');
-    const data = response.data;
-    
-    return {
-      success: true,
-      data: mapElectricalResponse(data),
-      raw: data,
-      isMock: false,
+      data: response.data,
+      message: 'Success',
+      raw: response.data,
     };
   } catch (error) {
-    console.error('Error fetching electrical telemetry:', error);
+    console.error(`Error fetching sensor ${sensorId}:`, error);
+    return {
+      success: false,
+      data: null,
+      message: error.message || `Failed to fetch sensor ${sensorId}`,
+      status: error.status,
+      error: error,
+    };
+  }
+};
+
+// ============================================
+// EVENTS API ENDPOINTS
+// ============================================
+
+/**
+ * GET /api/v1/events
+ * Get events with pagination and filtering
+ */
+export const getEvents = async (params = {}) => {
+  try {
+    const {
+      page = 1,
+      limit = 20,
+      sensorId,
+      eventType,
+      startDate,
+      endDate,
+    } = params;
+
+    // Build query parameters
+    const queryParams = new URLSearchParams();
+    queryParams.append('page', page);
+    queryParams.append('limit', limit);
     
-    if (error.code === 'ERR_NETWORK' || error.response?.status === 404) {
-      console.warn('Backend unavailable, falling back to mock data');
-      const mockData = generateMockElectricalData();
-      return {
+    if (sensorId) queryParams.append('sensorId', sensorId);
+    if (eventType) queryParams.append('eventType', eventType);
+    if (startDate) queryParams.append('startDate', startDate);
+    if (endDate) queryParams.append('endDate', endDate);
+
+    // ✅ CORRECT: /api/v1/events
+    const url = `/api/v1/events?${queryParams.toString()}`;
+    const response = await api.get(url);
+    
+    // Handle paginated response
+    if (response.data && response.data.data) {
+      const result = {
         success: true,
-        data: mapElectricalResponse(mockData),
-        raw: mockData,
-        isMock: true,
-        error: 'Using mock data (backend unavailable)',
+        data: response.data.data,
+        message: response.data.message || 'Success',
+        raw: response.data,
       };
+
+      // Preserve pagination information if available
+      if (response.data.pagination) {
+        result.pagination = response.data.pagination;
+      }
+      if (response.data.total) {
+        result.total = response.data.total;
+      }
+      if (response.data.page) {
+        result.page = response.data.page;
+      }
+      if (response.data.limit) {
+        result.limit = response.data.limit;
+      }
+
+      return result;
     }
     
     return {
-      success: false,
-      error: error.response?.data?.message || error.message || 'Failed to fetch electrical telemetry data',
-      status: error.response?.status,
-    };
-  }
-};
-
-// Events API
-export const mapEventsResponse = (data) => {
-  // Handle different response structures
-  const events = Array.isArray(data) ? data : (data?.data || data?.events || []);
-  
-  return events.map((item) => ({
-    id: item._id || item.id || `event-${Math.random()}`,
-    eventType: item.eventType || 'NORMAL',
-    zone: item.zone || null,
-    severity: item.severity || 'NORMAL',
-    message: item.message || null,
-    resolved: item.resolved !== undefined ? item.resolved : false,
-    timestamp: item.timestamp || item.createdAt || item.updatedAt || null,
-  }));
-};
-
-export const getEvents = async () => {
-  if (useMockData) {
-    console.log('Using mock data for events (no backend available)');
-    await new Promise(resolve => setTimeout(resolve, 400 + Math.random() * 400));
-    
-    const mockData = generateMockEvents();
-    return {
       success: true,
-      data: mapEventsResponse(mockData),
-      raw: mockData,
-      isMock: true,
-    };
-  }
-
-  try {
-    const response = await api.get('/api/events');
-    const data = response.data;
-    
-    // The backend returns events directly in the data array
-    const eventsData = data.data || data;
-    
-    return {
-      success: true,
-      data: mapEventsResponse(eventsData),
-      raw: data,
-      isMock: false,
+      data: response.data,
+      message: 'Success',
+      raw: response.data,
     };
   } catch (error) {
     console.error('Error fetching events:', error);
+    return {
+      success: false,
+      data: [],
+      message: error.message || 'Failed to fetch events',
+      status: error.status,
+      error: error,
+      pagination: null,
+    };
+  }
+};
+
+/**
+ * GET /api/v1/events/search
+ * Search events with advanced filtering
+ */
+export const searchEvents = async (params = {}) => {
+  try {
+    const {
+      query,
+      page = 1,
+      limit = 20,
+      sensorId,
+      eventType,
+      startDate,
+      endDate,
+      minAnomalyScore,
+      maxAnomalyScore,
+    } = params;
+
+    // Build query parameters
+    const queryParams = new URLSearchParams();
+    if (query) queryParams.append('q', query);
+    queryParams.append('page', page);
+    queryParams.append('limit', limit);
     
-    if (error.code === 'ERR_NETWORK' || error.response?.status === 404) {
-      console.warn('Backend unavailable, falling back to mock data');
-      const mockData = generateMockEvents();
+    if (sensorId) queryParams.append('sensorId', sensorId);
+    if (eventType) queryParams.append('eventType', eventType);
+    if (startDate) queryParams.append('startDate', startDate);
+    if (endDate) queryParams.append('endDate', endDate);
+    if (minAnomalyScore) queryParams.append('minAnomalyScore', minAnomalyScore);
+    if (maxAnomalyScore) queryParams.append('maxAnomalyScore', maxAnomalyScore);
+
+    // ✅ CORRECT: /api/v1/events/search
+    const url = `/api/v1/events/search?${queryParams.toString()}`;
+    const response = await api.get(url);
+    
+    // Handle paginated response
+    if (response.data && response.data.data) {
+      const result = {
+        success: true,
+        data: response.data.data,
+        message: response.data.message || 'Success',
+        raw: response.data,
+      };
+
+      if (response.data.pagination) {
+        result.pagination = response.data.pagination;
+      }
+      if (response.data.total) {
+        result.total = response.data.total;
+      }
+      if (response.data.page) {
+        result.page = response.data.page;
+      }
+      if (response.data.limit) {
+        result.limit = response.data.limit;
+      }
+
+      return result;
+    }
+    
+    return {
+      success: true,
+      data: response.data,
+      message: 'Success',
+      raw: response.data,
+    };
+  } catch (error) {
+    console.error('Error searching events:', error);
+    return {
+      success: false,
+      data: [],
+      message: error.message || 'Failed to search events',
+      status: error.status,
+      error: error,
+      pagination: null,
+    };
+  }
+};
+
+/**
+ * GET /api/v1/events/:id
+ * Get individual event by ID
+ */
+export const getEvent = async (eventId) => {
+  try {
+    // ✅ CORRECT: /api/v1/events/:id
+    const response = await api.get(`/api/v1/events/${eventId}`);
+    
+    if (response.data && response.data.data) {
       return {
         success: true,
-        data: mapEventsResponse(mockData),
-        raw: mockData,
-        isMock: true,
-        error: 'Using mock data (backend unavailable)',
+        data: response.data.data,
+        message: response.data.message || 'Success',
+        raw: response.data,
       };
     }
     
     return {
+      success: true,
+      data: response.data,
+      message: 'Success',
+      raw: response.data,
+    };
+  } catch (error) {
+    console.error(`Error fetching event ${eventId}:`, error);
+    return {
       success: false,
-      error: error.response?.data?.message || error.message || 'Failed to fetch events',
-      status: error.response?.status,
+      data: null,
+      message: error.message || `Failed to fetch event ${eventId}`,
+      status: error.status,
+      error: error,
     };
   }
+};
+
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+// Format sensor status for display
+export const formatSensorStatus = (status) => {
+  const statusMap = {
+    online: { label: 'Online', className: 'status-online', icon: '✓' },
+    offline: { label: 'Offline', className: 'status-offline', icon: '○' },
+    warning: { label: 'Warning', className: 'status-warning', icon: '⚠' },
+    critical: { label: 'Critical', className: 'status-critical', icon: '✕' },
+  };
+  return statusMap[status] || { label: status || 'Unknown', className: 'status-unknown', icon: '?' };
+};
+
+// Format event type for display
+export const formatEventType = (eventType) => {
+  const typeMap = {
+    normal: { label: 'Normal', className: 'event-normal' },
+    alert: { label: 'Alert', className: 'event-alert' },
+    critical: { label: 'Critical', className: 'event-critical' },
+    heartbeat: { label: 'Heartbeat', className: 'event-heartbeat' },
+    relay_action: { label: 'Relay Action', className: 'event-relay' },
+  };
+  return typeMap[eventType] || { label: eventType || 'Unknown', className: 'event-unknown' };
+};
+
+// Format ML classification for display
+export const formatMLClassification = (classification) => {
+  const classMap = {
+    normal: { label: 'Normal', className: 'ml-normal' },
+    anomaly: { label: 'Anomaly', className: 'ml-anomaly' },
+    critical: { label: 'Critical', className: 'ml-critical' },
+  };
+  return classMap[classification] || { label: classification || 'Unknown', className: 'ml-unknown' };
 };
 
 export default api;

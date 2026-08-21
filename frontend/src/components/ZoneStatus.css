@@ -1,4 +1,4 @@
-/* Zone Status Container */
+/* Container */
 .zone-status-container {
   background: #ffffff;
   border-radius: 10px;
@@ -23,12 +23,14 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .section-title {
@@ -47,6 +49,15 @@
   letter-spacing: 0.5px;
   background: #27ae60;
   color: white;
+}
+
+.zone-count {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  background: #f8f9fa;
+  padding: 0.2rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid #e8ecf1;
 }
 
 .mock-badge {
@@ -92,11 +103,35 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
+/* Status Colors */
+.zone-card.status-online {
+  border-left-color: #27ae60;
+}
+
+.zone-card.status-warning {
+  border-left-color: #f39c12;
+}
+
+.zone-card.status-critical {
+  border-left-color: #e74c3c;
+}
+
+.zone-card.status-offline {
+  border-left-color: #95a5a6;
+}
+
+.zone-card.zone-empty {
+  border-left-color: #dce1e8;
+}
+
+/* Card Header */
 .zone-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .zone-name {
@@ -114,6 +149,33 @@
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 600;
+  background: #ecf0f1;
+  color: #2c3e50;
+}
+
+.zone-card.status-online .zone-status-badge {
+  background: #eafaf1;
+  color: #27ae60;
+}
+
+.zone-card.status-warning .zone-status-badge {
+  background: #fef9e7;
+  color: #f39c12;
+}
+
+.zone-card.status-critical .zone-status-badge {
+  background: #fdedec;
+  color: #e74c3c;
+}
+
+.zone-card.status-offline .zone-status-badge {
+  background: #ecf0f1;
+  color: #7f8c8d;
+}
+
+.zone-card.zone-empty .zone-status-badge {
+  background: #ecf0f1;
+  color: #95a5a6;
 }
 
 .status-icon {
@@ -124,71 +186,101 @@
   font-size: 0.75rem;
 }
 
-/* Status Colors */
-.zone-card.status-normal {
-  border-left-color: #27ae60;
+.status-no-sensor {
+  color: #95a5a6;
 }
 
-.zone-card.status-normal .zone-status-badge {
-  background: #eafaf1;
-  color: #27ae60;
-}
-
-.zone-card.status-warning {
-  border-left-color: #f39c12;
-}
-
-.zone-card.status-warning .zone-status-badge {
-  background: #fef9e7;
-  color: #f39c12;
-}
-
-.zone-card.status-critical {
-  border-left-color: #e74c3c;
-}
-
-.zone-card.status-critical .zone-status-badge {
-  background: #fdedec;
-  color: #e74c3c;
-}
-
-.zone-card.status-offline {
-  border-left-color: #95a5a6;
-}
-
-.zone-card.status-offline .zone-status-badge {
-  background: #ecf0f1;
+.sensor-count {
+  font-size: 0.65rem;
   color: #7f8c8d;
+  font-weight: 400;
 }
 
 /* Card Body */
 .zone-card-body {
   display: flex;
   flex-direction: column;
+  gap: 0.8rem;
+}
+
+.zone-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
 }
 
 .zone-metric {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.85rem;
+  flex-direction: column;
+  padding: 0.4rem 0.6rem;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #f0f2f5;
 }
 
 .metric-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
   color: #7f8c8d;
-  font-weight: 500;
+  letter-spacing: 0.5px;
+  font-weight: 600;
 }
 
 .metric-value {
+  font-size: 1rem;
+  font-weight: 600;
   color: #2c3e50;
+  font-family: 'Courier New', monospace;
+}
+
+.relay-state {
+  font-weight: 700;
+}
+
+.zone-card.status-online .relay-state {
+  color: #27ae60;
+}
+
+.zone-card.status-offline .relay-state {
+  color: #95a5a6;
+}
+
+.zone-timestamp {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  color: #95a5a6;
+  padding-top: 0.3rem;
+  border-top: 1px solid #f0f2f5;
+}
+
+.timestamp-label {
   font-weight: 500;
 }
 
-.time-value {
+.timestamp-value {
   font-family: 'Courier New', monospace;
-  font-size: 0.8rem;
-  color: #5a6a7a;
+}
+
+/* No Sensor State */
+.zone-no-sensor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0;
+  color: #95a5a6;
+}
+
+.no-sensor-icon {
+  font-size: 2rem;
+  margin-bottom: 0.3rem;
+}
+
+.zone-no-sensor p {
+  margin: 0;
+  font-size: 0.85rem;
 }
 
 /* Footer */
@@ -215,10 +307,14 @@
   background: #2980b9;
 }
 
+.refresh-button:active {
+  transform: scale(0.98);
+}
+
 /* Loading State */
 .zone-status-loading {
   text-align: center;
-  padding: 3rem 1rem;
+  padding: 2rem 1rem;
   color: #7f8c8d;
 }
 
@@ -262,21 +358,6 @@
   margin-bottom: 1rem;
 }
 
-.retry-button {
-  padding: 0.5rem 1.5rem;
-  background: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.retry-button:hover {
-  background: #c0392b;
-}
-
 /* Empty State */
 .zone-status-empty {
   text-align: center;
@@ -292,6 +373,25 @@
 .zone-status-empty h3 {
   color: #2c3e50;
   margin: 0.5rem 0;
+}
+
+.zone-status-empty p {
+  margin-bottom: 1rem;
+}
+
+.retry-button {
+  padding: 0.5rem 1.5rem;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.retry-button:hover {
+  background: #2980b9;
 }
 
 /* Responsive */
@@ -312,7 +412,6 @@
   }
 
   .header-right {
-    flex-wrap: wrap;
     width: 100%;
   }
 
@@ -328,15 +427,37 @@
   .zone-card {
     padding: 1rem;
   }
+
+  .zone-metrics-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 480px) {
   .zone-card-header {
     flex-direction: column;
-    gap: 0.5rem;
+    align-items: flex-start;
+    gap: 0.3rem;
   }
 
   .zone-status-badge {
     align-self: flex-start;
+  }
+
+  .zone-metrics-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem;
+  }
+
+  .zone-metric {
+    padding: 0.3rem 0.4rem;
+  }
+
+  .metric-value {
+    font-size: 0.85rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
   }
 }
